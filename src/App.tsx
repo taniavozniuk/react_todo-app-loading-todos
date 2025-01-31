@@ -1,9 +1,10 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable jsx-a11y/control-has-associated-label */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 // import { UserWarning } from './UserWarning';
-import { USER_ID } from './api/todos';
+import { getTodos } from './api/todos';
 import { Todo } from './types/Todo';
+import { USER_ID } from './api/todos';
 
 type Filter = 'all' | 'active' | 'completed';
 
@@ -16,6 +17,7 @@ export const App: React.FC = () => {
   // const [hasTitleError, setHasTitleError] = useState(false);
   const [todos, setTodos] = useState<Todo[]>([]);
   const [filter, setFilter] = useState<Filter>('all');
+  const [loadTodos, setLoadTodos] = useState(true); //запит на сервер
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -33,6 +35,10 @@ export const App: React.FC = () => {
 
     setTodos(prevTodos => [...prevTodos, newTodo]);
     setTitle('');
+  };
+
+  const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(event.target.value);
   };
 
   // стан todos
@@ -57,6 +63,18 @@ export const App: React.FC = () => {
     return true;
   });
 
+  function loadTodos() {
+    setLoadTodos(true);
+
+    getTodos(USER_ID)
+      .then(setTodos)
+      .finally(() => setLoadTodos(false));
+  }
+
+  useEffect(() => {
+    loadTodos();
+  }, [USER_ID]);
+
   return (
     <div className="todoapp">
       <h1 className="todoapp__title">todos</h1>
@@ -78,7 +96,7 @@ export const App: React.FC = () => {
               className="todoapp__new-todo"
               placeholder="What needs to be done?"
               value={title}
-              onChange={e => setTitle(e.target.value)}
+              onChange={handleTitleChange}
             />
           </form>
         </header>
