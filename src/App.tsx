@@ -15,7 +15,7 @@ export const App: React.FC = () => {
   // }
 
   const [title, setTitle] = useState('');
-  const [isError, setIsError] = useState('');
+  const [isError, setIsError] = useState(false);
   const [todos, setTodos] = useState<Todo[]>([]);
   const [filter, setFilter] = useState<Filter>('all');
   const [isloadTodos, setIsLoadTodos] = useState(true); //запит на сервер
@@ -195,7 +195,9 @@ export const App: React.FC = () => {
 
       {/* DON'T use conditional rendering to hide the notification */}
       {/* Add the 'hidden' class to hide the message smoothly */}
-      <ErrorMessange message={isError} onClose={() => setIsError('')} />
+      {isError && (
+        <ErrorMessange message={isError} onClose={() => setIsError(false)} />
+      )}
     </div>
   );
 };
