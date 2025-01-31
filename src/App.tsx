@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { getTodos } from './api/todos';
 import { Todo } from './types/Todo';
 import { USER_ID } from './api/todos';
+import { ErrorMessange } from './component/ErrorMessange';
 
 type Filter = 'all' | 'active' | 'completed';
 
@@ -14,10 +15,10 @@ export const App: React.FC = () => {
   // }
 
   const [title, setTitle] = useState('');
-  // const [hasTitleError, setHasTitleError] = useState(false);
+  const [isError, setIsError] = useState('');
   const [todos, setTodos] = useState<Todo[]>([]);
   const [filter, setFilter] = useState<Filter>('all');
-  const [loadTodos, setLoadTodos] = useState(true); //запит на сервер
+  const [isloadTodos, setIsLoadTodos] = useState(true); //запит на сервер
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -35,6 +36,7 @@ export const App: React.FC = () => {
 
     setTodos(prevTodos => [...prevTodos, newTodo]);
     setTitle('');
+    setIsError('');
   };
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,16 +66,16 @@ export const App: React.FC = () => {
   });
 
   function loadTodos() {
-    setLoadTodos(true);
+    setIsLoadTodos(true);
 
-    getTodos(USER_ID)
+    getTodos()
       .then(setTodos)
-      .finally(() => setLoadTodos(false));
+      .finally(() => setIsLoadTodos(false));
   }
 
   useEffect(() => {
     loadTodos();
-  }, [USER_ID]);
+  }, []);
 
   return (
     <div className="todoapp">
@@ -132,6 +134,7 @@ export const App: React.FC = () => {
               </button>
 
               {/* overlay will cover the todo while it is being deleted or updated */}
+
               <div data-cy="TodoLoader" className="modal overlay">
                 <div className="modal-background has-background-white-ter" />
                 <div className="loader" />
@@ -192,23 +195,7 @@ export const App: React.FC = () => {
 
       {/* DON'T use conditional rendering to hide the notification */}
       {/* Add the 'hidden' class to hide the message smoothly */}
-      <div
-        data-cy="ErrorNotification"
-        className="notification is-danger
-        is-light has-text-weight-normal hidden"
-      >
-        <button data-cy="HideErrorButton" type="button" className="delete" />
-        {/* show only one message at a time */}
-        Unable to load todos
-        <br />
-        Title should not be empty
-        <br />
-        Unable to add a todo
-        <br />
-        Unable to delete a todo
-        <br />
-        Unable to update a todo
-      </div>
+      <ErrorMessange message={isError} onClose={() => setIsError('')} />
     </div>
   );
 };
