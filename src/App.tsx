@@ -6,8 +6,7 @@ import { getTodos } from './api/todos';
 import { Todo } from './types/Todo';
 import { USER_ID } from './api/todos';
 import { ErrorMessange } from './component/ErrorMessange';
-
-type Filter = 'all' | 'active' | 'completed';
+import { Statys } from './types/statys';
 
 export const App: React.FC = () => {
   // if (!USER_ID) {
@@ -17,8 +16,8 @@ export const App: React.FC = () => {
   const [title, setTitle] = useState('');
   const [error, setError] = useState('');
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [filter, setFilter] = useState<Filter>('all');
-  const [isloadTodos, setIsLoadTodos] = useState(true); //запит на сервер
+  const [filter, setFilter] = useState<Statys>(Statys.ALL);
+  // const [isloadTodos, setIsLoadTodos] = useState(true); //запит на сервер
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -54,11 +53,11 @@ export const App: React.FC = () => {
 
   // фільтрує
   const filteredTodos = todos.filter(todo => {
-    if (filter === 'active') {
+    if (filter === Statys.ACTIVE) {
       return !todo.completed;
     }
 
-    if (filter === 'completed') {
+    if (filter === Statys.COMPLETED) {
       return todo.completed;
     }
 
@@ -66,12 +65,12 @@ export const App: React.FC = () => {
   });
 
   function loadTodos() {
-    setIsLoadTodos(true);
+    // setIsLoadTodos(true);
 
     getTodos()
       .then(setTodos)
-      .catch(() => setError('Unable to load todos'))
-      .finally(() => setIsLoadTodos(false));
+      .catch(() => setError('Unable to load todos'));
+    // .finally(() => setIsLoadTodos(false));
   }
 
   useEffect(() => {
@@ -155,27 +154,27 @@ export const App: React.FC = () => {
             <nav className="filter" data-cy="Filter">
               <a
                 href="#/"
-                className={`filter__link ${filter === 'all' ? 'selected' : ''}`}
+                className={`filter__link ${filter === Statys.ALL ? 'selected' : ''}`}
                 data-cy="FilterLinkAll"
-                onClick={() => setFilter('all')}
+                onClick={() => setFilter(Statys.ALL)}
               >
                 All
               </a>
 
               <a
                 href="#/active"
-                className={`filter__link ${filter === 'active' ? 'selected' : ''}`}
+                className={`filter__link ${filter === Statys.ACTIVE ? 'selected' : ''}`}
                 data-cy="FilterLinkActive"
-                onClick={() => setFilter('active')}
+                onClick={() => setFilter(Statys.ACTIVE)}
               >
                 Active
               </a>
 
               <a
                 href="#/completed"
-                className={`filter__link ${filter === 'completed' ? 'selected' : ''}`}
+                className={`filter__link ${filter === Statys.COMPLETED ? 'selected' : ''}`}
                 data-cy="FilterLinkCompleted"
-                onClick={() => setFilter('completed')}
+                onClick={() => setFilter(Statys.COMPLETED)}
               >
                 Completed
               </a>
