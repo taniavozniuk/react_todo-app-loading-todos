@@ -15,7 +15,7 @@ export const App: React.FC = () => {
   // }
 
   const [title, setTitle] = useState('');
-  const [isError, setIsError] = useState(false);
+  const [error, setError] = useState('');
   const [todos, setTodos] = useState<Todo[]>([]);
   const [filter, setFilter] = useState<Filter>('all');
   const [isloadTodos, setIsLoadTodos] = useState(true); //запит на сервер
@@ -36,7 +36,7 @@ export const App: React.FC = () => {
 
     setTodos(prevTodos => [...prevTodos, newTodo]);
     setTitle('');
-    setIsError('');
+    setError('');
   };
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,6 +70,7 @@ export const App: React.FC = () => {
 
     getTodos()
       .then(setTodos)
+      .catch(() => setError('Unable to load todos'))
       .finally(() => setIsLoadTodos(false));
   }
 
@@ -195,9 +196,16 @@ export const App: React.FC = () => {
 
       {/* DON'T use conditional rendering to hide the notification */}
       {/* Add the 'hidden' class to hide the message smoothly */}
-      {isError && (
-        <ErrorMessange message={isError} onClose={() => setIsError(false)} />
-      )}
+      <ErrorMessange message={error} onClose={() => setError('')} />
     </div>
   );
 };
+// Unable to load todos
+// <br />
+// Title should not be empty
+// <br />
+// Unable to add a todo
+// <br />
+// Unable to delete a todo
+// <br />
+// Unable to update a todo

@@ -12,7 +12,7 @@ export const ErrorMessange: React.FC<Props> = ({ message, onClose }) => {
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [onClose]);
+  }, [message, onClose]);
 
   return (
     <div
